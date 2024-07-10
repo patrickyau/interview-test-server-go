@@ -1,6 +1,6 @@
 package main
 
-// album represents data about a record album.
+// TaxBracket represents a tax bracket for a given year.
 type TaxBracket struct {
 	Min     float64 `json:"min"`
 	Max     float64 `json:"max"`
@@ -8,7 +8,7 @@ type TaxBracket struct {
 	TaxOwed float64 `json:"tax_owed,omitempty"`
 }
 
-// albums slice to seed record album data.
+// TaxBrackets represents the tax brackets for all supported years.
 var TaxBrackets = map[string][]TaxBracket{
 	"2019": {
 		{Min: 0,

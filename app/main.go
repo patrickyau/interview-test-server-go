@@ -58,6 +58,12 @@ type Salary struct {
 	Salary float64 `json:"salary"`
 }
 
+type Err struct {
+	Code    uint   `json:"code"`
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
+
 type TaxOwed struct {
 	EffectiveTaxRate string       `json:"effective_tax_rate"`
 	Salary           float64      `json:"salary"`
@@ -83,12 +89,20 @@ func postTaxCalculationsByYear(c *gin.Context) {
 	year := c.Param("year")
 	taxBrackets, err := GetTaxCalculatorInstructionsByYear(year)
 	if err != nil {
-		c.IndentedJSON(http.StatusNotFound, err)
+		c.IndentedJSON(http.StatusNotFound, gin.H{
+			"code":    err.Code,
+			"field":   err.Field,
+			"message": err.Message,
+		})
 		return
 	}
-	result := ValidateSalary(newSalary.Salary)
-	if result != nil {
-		c.IndentedJSON(http.StatusBadRequest, result)
+	err = ValidateSalary(newSalary.Salary)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"code":    err.Code,
+			"field":   err.Field,
+			"message": err.Message,
+		})
 		return
 	}
 
@@ -120,34 +134,34 @@ func postTaxCalculationsByYear(c *gin.Context) {
 
 // Simple implementation of an integer minimum
 // Adapted from: https://gobyexample.com/testing-and-benchmarking
-func IntMin(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
+// func IntMin(a, b int) int {
+// 	if a < b {
+// 		return a
+// 	}
+// 	return b
+// }
 
-func GetTaxCalculatorInstructionsByYear(year string) ([]TaxBracket, gin.H) {
+func GetTaxCalculatorInstructionsByYear(year string) ([]TaxBracket, *Err) {
 	if year == "" {
 		year = "2022"
 	}
 	taxBrackets := TaxBrackets[year]
 	if len(taxBrackets) == 0 {
-		return nil, gin.H{
-			"code":    http.StatusNotFound,
-			"field":   "tax-year",
-			"message": fmt.Sprintf("tax brackets for the tax year %s is not found", year),
+		return nil, &Err{
+			Code:    http.StatusNotFound,
+			Field:   "tax-year",
+			Message: fmt.Sprintf("tax brackets for the tax year %s is not found", year),
 		}
 	}
 	return taxBrackets, nil
 }
 
-func ValidateSalary(salary float64) gin.H {
+func ValidateSalary(salary float64) *Err {
 	if salary < 0 {
-		return gin.H{
-			"code":    http.StatusBadRequest,
-			"field":   "salary",
-			"message": fmt.Sprintf("the salary for the tax year must be greater than 0. Invalid value: %.2f", salary),
+		return &Err{
+			Code:    http.StatusBadRequest,
+			Field:   "salary",
+			Message: fmt.Sprintf("the salary for the tax year must be greater than 0. Invalid value: %.2f", salary),
 		}
 	}
 	return nil
