@@ -4,23 +4,22 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"time"
 
 	// Import the ginzerolog package
-
 	ginzerolog "github.com/dn365/gin-zerolog"
 	"github.com/gin-gonic/gin"
-	// "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	// log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	// router := gin.Default()
 	gin.SetMode(gin.DebugMode)
 	router := gin.New()
-	// router.Use(gin.Logger())
-	router.Use(ginzerolog.Logger("gin")) // Use the ginzerolog middleware
-	router.Use(gin.Recovery())           // to recover gin automatically
-	// router.Use(jsonLoggerMiddleware()) // we'll define it later
+
+	router.Use(ginzerolog.Logger("gin"))   // Use the ginzerolog middleware
+	router.Use(gin.Recovery())             // to recover gin automatically
+	zerolog.TimeFieldFormat = time.RFC3339 //zerolog.TimeFormatUnix
 
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Hello, this is the Interview Test Server!"})
@@ -76,6 +75,7 @@ type TaxOwed struct {
 func postTaxCalculationsByYear(c *gin.Context) {
 	var newSalary Salary
 
+	log.Debug().Msg("postTaxCalculationsByYear called")
 	// Call BindJSON to bind the received JSON to newSalary.
 	if err := c.BindJSON(&newSalary); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
@@ -87,6 +87,7 @@ func postTaxCalculationsByYear(c *gin.Context) {
 	}
 
 	year := c.Param("year")
+	log.Debug().Msgf("postTaxCalculationsByYear() year: %v, salary: %.2f", year, newSalary.Salary)
 	taxBrackets, err := GetTaxCalculatorInstructionsByYear(year)
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{
@@ -155,7 +156,7 @@ func CalculateTaxAmount(year string, taxBrackets []TaxBracket, salary float64) T
 			taxableIncome := leftover - bracket.Min
 			taxAmount = taxableIncome * bracket.Rate
 			totalTaxAmount += taxAmount
-			bracket.TaxOwed = math.Ceil(taxAmount*100) / 100
+			bracket.TaxOwed = math.Round(taxAmount*100) / 100
 
 			taxPerBracket = append(taxPerBracket, bracket)
 		}
@@ -166,6 +167,6 @@ func CalculateTaxAmount(year string, taxBrackets []TaxBracket, salary float64) T
 		Salary:           salary,
 		TaxYear:          year,
 		TaxOwnedPerBand:  taxPerBracket,
-		TotalTaxOwed:     math.Ceil(totalTaxAmount*100) / 100,
+		TotalTaxOwed:     math.Round(totalTaxAmount*100) / 100,
 	}
 }

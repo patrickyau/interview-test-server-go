@@ -6,64 +6,40 @@ import (
 	"testing"
 )
 
-// // A simple example of unit testing a function.
-// // Adapted from: https://gobyexample.com/testing-and-benchmarking
+// TestGetAllTaxCalculatorInstructions tests the GetAllTaxCalculatorInstructions function.
+func TestGetAllTaxCalculatorInstructions(t *testing.T) {
+	// Ran out of time to implement this test
+}
 
-// func TestIntMinBasic(t *testing.T) {
-// 	ans := IntMin(2, -2)
-// 	if ans != -2 {
-// 		t.Errorf("IntMin(2, -2) = %d; want -2", ans)
-// 	}
-// }
-
-//	func TestIntMinTableDriven(t *testing.T) {
-//		var tests = []struct {
-//			a, b int
-//			want int
-//		}{
-//			{0, 1, 0},
-//			{1, 0, 0},
-//			{2, -2, -2},
-//			{0, -1, -1},
-//			{-1, 0, -1},
-//		}
-//		for _, tt := range tests {
-//			testname := fmt.Sprintf("%d,%d", tt.a, tt.b)
-//			t.Run(testname, func(t *testing.T) {
-//				ans := IntMin(tt.a, tt.b)
-//				if ans != tt.want {
-//					t.Errorf("got %d, want %d", ans, tt.want)
-//				}
-//			})
-//		}
-//	}
-//
+func TestCalculateTaxAmount(t *testing.T) {
+	// Ran out of time to implement this test
+}
 
 // TestValidateSalary tests the ValidateSalary function.
-// func TestValidateSalary(t *testing.T) {
-// 	var tests = []struct {
-// 		salary float64
-// 		valid  bool
-// 	}{
-// 		{50000, true},
-// 		{100000, true},
-// 		{200000, true},
-// 		{300000, true},
-// 		{400000, true},
-// 		{0, false},
-// 		{-1000, false},
-// 	}
-
-// 	for _, tt := range tests {
-// 		testname := fmt.Sprintf("Salary: %.2f", tt.salary)
-// 		t.Run(testname, func(t *testing.T) {
-// 			err := ValidateSalary(tt.salary)
-// 			if err != nil {
-// 				t.Errorf("got %v, want %v", valid, tt.valid)
-// 			}
-// 		})
-// 	}
-// }
+func TestValidateSalary(t *testing.T) {
+	var tests = []struct {
+		salary float64
+		valid  bool
+	}{
+		{50000, true},
+		{100000, true},
+		{200000, true},
+		{300000, true},
+		{400000, true},
+		{0, false},
+		{-1000, false},
+	}
+	// TestGetAllTaxCalculatorInstructions tests the GetAllTaxCalculatorInstructions function.
+	for _, tt := range tests {
+		testname := fmt.Sprintf("Salary: %.2f", tt.salary)
+		t.Run(testname, func(t *testing.T) {
+			err := ValidateSalary(tt.salary)
+			if err != nil {
+				t.Errorf("got %v, want %v", valid, tt.valid)
+			}
+		})
+	}
+}
 
 // TestGetTaxCalculatorInstructionsByYear tests the GetTaxCalculatorInstructionsByYear function.
 func TestGetTaxCalculatorInstructionsByYear(t *testing.T) {

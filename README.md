@@ -15,7 +15,7 @@ Please [see the official reference to tax brackets](https://www.canada.ca/en/fin
 
 The goal of this assessment is to provide a picture of your approach to development as it relates to:
 
-* Design patterns/programming paradigm - Would like to introduce Model-View-Controller (MVC) pattern but, ran out of time.
+* Design patterns/programming paradigm - Would like to introduce Model-View-Controller (MVC - Command) pattern but, ran out of time.
 * Scalability
 * API interface design
 * Frameworks - Gin server framework
@@ -118,7 +118,7 @@ In order to run the API locally, please follow these instructions:
 
 ```bash
 docker pull patrickyau/interview-test-server-go
-docker run --init --rm -p 8080:8080 --name interview-test-server-go interview-test-server-go
+docker run --init --rm -p 8080:8080 --name interview-test-server interview-test-server
 ```
 
 Navigate to [http://localhost:8080](http://localhost:8080). You should be greeted with this message:

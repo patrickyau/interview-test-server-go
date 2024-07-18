@@ -1,6 +1,7 @@
 package main
 
 // TaxBracket represents a tax bracket for a given year.
+// This allows the Decorator design pattern to be used to expand with other tax bracket criteria.
 type TaxBracket struct {
 	Min     float64 `json:"min"`
 	Max     float64 `json:"max"`
@@ -9,6 +10,7 @@ type TaxBracket struct {
 }
 
 // TaxBrackets represents the tax brackets for all supported years.
+// A Singleton design pattern is used to ensure that only one instance of the TaxBrackets map is created.
 var TaxBrackets = map[string][]TaxBracket{
 	"2019": {
 		{Min: 0,
