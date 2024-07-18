@@ -116,31 +116,6 @@ func postTaxCalculationsByYear(c *gin.Context) {
 	})
 }
 
-// // getAlbumByID locates the album whose ID value matches the id
-// // parameter sent by the client, then returns that album as a response.
-// func getAlbumByID(c *gin.Context) {
-// 	id := c.Param("id")
-
-// 	// Loop over the list of albums, looking for
-// 	// an album whose ID value matches the parameter.
-// 	for _, a := range albums {
-// 		if a.ID == id {
-// 			c.IndentedJSON(http.StatusOK, a)
-// 			return
-// 		}
-// 	}
-// 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
-// }
-
-// Simple implementation of an integer minimum
-// Adapted from: https://gobyexample.com/testing-and-benchmarking
-// func IntMin(a, b int) int {
-// 	if a < b {
-// 		return a
-// 	}
-// 	return b
-// }
-
 func GetTaxCalculatorInstructionsByYear(year string) ([]TaxBracket, *Err) {
 	if year == "" {
 		year = "2022"
