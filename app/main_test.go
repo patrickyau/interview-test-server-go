@@ -35,7 +35,7 @@ func TestValidateSalary(t *testing.T) {
 		t.Run(testname, func(t *testing.T) {
 			err := ValidateSalary(tt.salary)
 			if err != nil {
-				t.Errorf("got %v, want %v", valid, tt.valid)
+				t.Errorf("got %v, want %v", tt.valid, tt.valid)
 			}
 		})
 	}

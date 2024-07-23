@@ -1,0 +1,183 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  x-go-package: "github.com/oapi-codegen/runtime"
+  title: Interview Test Server in Go
+  description:
+    Thiis is a simple server for interview test in Go.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  x-oapi-codegen-middlewares:
+    - Middleware
+
+servers:
+  - url: /tax-calculator
+paths:
+  /:
+    get:
+      summary: Get tax bracket for the default year 2022
+      operationId: getTaxCalculator
+      responses:
+        '200':
+          description: Tax bracket for the default year 2022
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxBracketResponses'
+  /tax-years/{year}:
+    get:
+      summary: Get tax bracket for the given year
+      operationId: getTaxCalculatorByYear
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Year to get tax bracket
+      responses:
+        '200':
+          description: Tax bracket for the given year
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxBracketResponses'
+  /tax-years:
+    get:
+      summary: Get all tax brackets
+      operationId: getAllTaxCalculator
+      responses:
+        '200':
+          description: All tax brackets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllTaxBracketResponses'
+  /tax-years/{year}/calculate:
+    post:
+      summary: Calculate
+      operationId: calculate
+      tags:
+        - Calculate
+      description: Calculate tax based on the given salary and the tax year
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Year to calculate tax
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculateRequest'
+      responses:
+        '200':
+          description: Tax calculation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculateResponse'
+  /check:
+    get:
+      summary: Check
+      operationId: check
+      responses:
+        '200':
+          description: Health check
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponses'
+components:
+  schemas:
+    HealthCheckResponses:
+      type: object
+      x-go-type-skip-optional-pointer: true
+      required: 
+        - Status
+      properties:
+        Status:
+          type: string
+          x-go-type-skip-optional-pointer: true
+    TaxBracketResponses:
+      type: object
+      x-go-type-skip-optional-pointer: true
+      required: 
+        - year
+        - taxBracket
+      properties:
+        year:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        taxBracket:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxBracket'
+          x-go-type-skip-optional-pointer: true
+    TaxBracket:
+      type: object
+      x-go-type-skip-optional-pointer: true
+      required: 
+        - min
+        - max
+        - rate
+      properties:
+        min:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        max:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        rate:
+          type: number
+          x-go-type-skip-optional-pointer: true
+        tax_owed:
+          type: number
+          x-go-type-skip-optional-pointer: true
+    AllTaxBracketResponses:
+      type: object
+      x-go-type-skip-optional-pointer: true
+      required: 
+        - taxBrackets
+      properties:
+        taxBrackets:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxBracket'
+          x-go-type-skip-optional-pointer: true
+    CalculateRequest:
+      type: object
+      x-go-type-skip-optional-pointer: true
+      required: 
+        - salary
+      properties:
+        salary:
+          type: number
+          x-go-type-skip-optional-pointer: true
+    CalculateResponse:
+      type: object
+      x-go-type-skip-optional-pointer: true
+      required: 
+        - tax
+      properties:
+        total_tax_owed:
+          type: number
+          x-go-type-skip-optional-pointer: true
+        tax_year:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        tax_owed_per_band:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxBracket'
+          x-go-type-skip-optional-pointer: true
+        salary:
+          type: number
+          x-go-type-skip-optional-pointer: true
+        effective_tax_rate:
+          type: string
+          x-go-type-skip-optional-pointer: true
