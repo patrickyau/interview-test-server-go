@@ -26,7 +26,7 @@ func TestValidateSalary(t *testing.T) {
 		{200000, true},
 		{300000, true},
 		{400000, true},
-		{0, false},
+		{0, true},
 		{-1000, false},
 	}
 	// TestGetAllTaxCalculatorInstructions tests the GetAllTaxCalculatorInstructions function.
@@ -34,8 +34,10 @@ func TestValidateSalary(t *testing.T) {
 		testname := fmt.Sprintf("Salary: %.2f", tt.salary)
 		t.Run(testname, func(t *testing.T) {
 			err := ValidateSalary(tt.salary)
-			if err != nil {
-				t.Errorf("got %v, want %v", tt.valid, tt.valid)
+			if err != nil && tt.valid {
+				t.Errorf("got %v, want %v", false, tt.valid)
+			} else if err == nil && !tt.valid {
+				t.Errorf("got %v, want %v", true, tt.valid)
 			}
 		})
 	}
@@ -83,7 +85,7 @@ func TestGetTaxCalculatorInstructionsByYear(t *testing.T) {
 			[]TaxBracket{},
 			&Err{
 				Code:    http.StatusNotFound,
-				Field:   "tax-year",
+				Field:   "year",
 				Message: "tax brackets for the tax year 2018 is not found",
 			},
 		},

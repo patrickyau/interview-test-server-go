@@ -74,7 +74,7 @@ func main() {
 		Handler: apiServer,
 	}
 
-	log.Info().Msgf("Server listening on", addr)
+	log.Info().Msgf("Server listening on %v", addr)
 	err = httpServer.ListenAndServe()
 	if err != nil {
 		log.Fatal().Msgf("error: %v", err)
