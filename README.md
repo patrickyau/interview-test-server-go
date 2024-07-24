@@ -113,12 +113,19 @@ The smaple response can be found here:
 
 
 ## Get up and running
-
+To build the docker image, please follow these instructions:
+```bash
+docker build --tag interview-test-server-go .
+```
 In order to run the API locally, please follow these instructions:
 
 ```bash
 docker pull patrickyau/interview-test-server-go
 docker run --init --rm -p 8080:8080 --name interview-test-server interview-test-server (or use `make run`)
+```
+OR simply use the `make` command to run the service:
+```bash
+make run
 ```
 
 Navigate to [http://localhost:8080/tax-calculator/health](http://localhost:8080/tax-calculator/health). You should be greeted with this message:
