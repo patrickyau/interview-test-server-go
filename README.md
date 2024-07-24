@@ -1,6 +1,6 @@
 # Interview Test Server
 
-It project demonstrates how the Interview Test Server can calculate tax return.
+It project demonstrates how the Interview Test Server can calculate tax return. This project has been updated to use the [oapi-codegen tool](https://github.com/oapi-codegen/oapi-codegen) to generate interface code from OpenAPI.yaml file. Implementation code has been added to get all APIs to work.
 
 ## The Assignment - Tax Calculator
 
