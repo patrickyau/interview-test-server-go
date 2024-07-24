@@ -38,6 +38,13 @@ type CalculateResponse struct {
 	TotalTaxOwed     float32      `json:"total_tax_owed"`
 }
 
+// ErrorResponses defines model for ErrorResponses.
+type ErrorResponses struct {
+	Code    int    `json:"code,omitempty"`
+	Field   string `json:"field,omitempty"`
+	Message string `json:"message,omitempty"`
+}
+
 // HealthCheckResponses defines model for HealthCheckResponses.
 type HealthCheckResponses struct {
 	Status string `json:"status"`
@@ -364,6 +371,15 @@ func (response GetTaxCalculator200JSONResponse) VisitGetTaxCalculatorResponse(w 
 	return json.NewEncoder(w).Encode(response)
 }
 
+type GetTaxCalculator400JSONResponse ErrorResponses
+
+func (response GetTaxCalculator400JSONResponse) VisitGetTaxCalculatorResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 type CheckRequestObject struct {
 }
 
@@ -413,20 +429,22 @@ func (response GetTaxCalculatorByYear200JSONResponse) VisitGetTaxCalculatorByYea
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetTaxCalculatorByYear400Response struct {
-}
+type GetTaxCalculatorByYear400JSONResponse ErrorResponses
 
-func (response GetTaxCalculatorByYear400Response) VisitGetTaxCalculatorByYearResponse(w http.ResponseWriter) error {
+func (response GetTaxCalculatorByYear400JSONResponse) VisitGetTaxCalculatorByYearResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
-	return nil
+
+	return json.NewEncoder(w).Encode(response)
 }
 
-type GetTaxCalculatorByYear404Response struct {
-}
+type GetTaxCalculatorByYear404JSONResponse ErrorResponses
 
-func (response GetTaxCalculatorByYear404Response) VisitGetTaxCalculatorByYearResponse(w http.ResponseWriter) error {
+func (response GetTaxCalculatorByYear404JSONResponse) VisitGetTaxCalculatorByYearResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
-	return nil
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 type CalculateRequestObject struct {
@@ -447,20 +465,22 @@ func (response Calculate200JSONResponse) VisitCalculateResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
-type Calculate400Response struct {
-}
+type Calculate400JSONResponse ErrorResponses
 
-func (response Calculate400Response) VisitCalculateResponse(w http.ResponseWriter) error {
+func (response Calculate400JSONResponse) VisitCalculateResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
-	return nil
+
+	return json.NewEncoder(w).Encode(response)
 }
 
-type Calculate404Response struct {
-}
+type Calculate404JSONResponse ErrorResponses
 
-func (response Calculate404Response) VisitCalculateResponse(w http.ResponseWriter) error {
+func (response Calculate404JSONResponse) VisitCalculateResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
-	return nil
+
+	return json.NewEncoder(w).Encode(response)
 }
 
 // StrictServerInterface represents all server handlers.
@@ -645,22 +665,23 @@ func (sh *strictHandler) Calculate(w http.ResponseWriter, r *http.Request, year 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"Zt78EwAA///rSBU5ghIAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

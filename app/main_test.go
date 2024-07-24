@@ -8,11 +8,11 @@ import (
 
 // TestGetAllTaxCalculatorInstructions tests the GetAllTaxCalculatorInstructions function.
 func TestGetAllTaxCalculatorInstructions(t *testing.T) {
-	// Ran out of time to implement this test
+	// TODO: Implement this test
 }
 
 func TestCalculateTaxAmount(t *testing.T) {
-	// Ran out of time to implement this test
+	// TODO: Implement this test
 }
 
 // TestValidateSalary tests the ValidateSalary function.

@@ -5,6 +5,8 @@ go 1.22.5
 require (
 	github.com/getkin/kin-openapi v0.126.0
 	github.com/go-chi/chi/v5 v5.1.0
+	github.com/go-chi/httplog/v2 v2.1.1
+	github.com/go-chi/render v1.0.3
 	github.com/go-openapi/runtime v0.28.0
 	github.com/oapi-codegen/nethttp-middleware v1.0.2
 	github.com/oapi-codegen/runtime v1.1.1
@@ -12,6 +14,7 @@ require (
 )
 
 require (
+	github.com/ajg/form v1.5.1 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/go-openapi/analysis v0.23.0 // indirect

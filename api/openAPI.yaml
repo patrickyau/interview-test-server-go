@@ -3,8 +3,7 @@ info:
   version: 1.0.0
   x-go-package: "github.com/oapi-codegen/runtime"
   title: Interview Test Server in Go
-  description:
-    Thiis is a simple server for interview test in Go.
+  description: Thiis is a simple server for interview test in Go.
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
@@ -19,12 +18,18 @@ paths:
       summary: Get tax bracket for the default year 2022
       operationId: getTaxCalculator
       responses:
-        '200':
+        "200":
           description: Tax bracket for the default year 2022
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaxBracketResponses'
+                $ref: "#/components/schemas/TaxBracketResponses"
+        "400":
+          description: The year is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponses"
   /tax-years/{year}:
     get:
       summary: Get tax bracket for the given year
@@ -37,35 +42,35 @@ paths:
             type: string
           description: Year to get tax bracket
       responses:
-        '200':
+        "200":
           description: Tax bracket for the given year
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaxBracketResponses'
-        '404':
+                $ref: "#/components/schemas/TaxBracketResponses"
+        "404":
           description: Tax bracket for the year cannot found
-          context:
+          content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponses'
-        '400':
+                $ref: "#/components/schemas/ErrorResponses"
+        "400":
           description: The year is invalid
-          context:
+          content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponses'
+                $ref: "#/components/schemas/ErrorResponses"
   /tax-years:
     get:
       summary: Get all tax brackets
       operationId: getAllTaxCalculator
       responses:
-        '200':
+        "200":
           description: All tax brackets
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllTaxBracketResponses'
+                $ref: "#/components/schemas/AllTaxBracketResponses"
   /tax-years/{year}/calculate:
     post:
       summary: Calculate
@@ -85,43 +90,43 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CalculateRequest'
+              $ref: "#/components/schemas/CalculateRequest"
       responses:
-        '200':
+        "200":
           description: Tax calculation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CalculateResponse'
-        '404':
+                $ref: "#/components/schemas/CalculateResponse"
+        "404":
           description: Tax bracket for the year cannot found
-          context:
+          content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponses'
-        '400':
+                $ref: "#/components/schemas/ErrorResponses"
+        "400":
           description: The year or the salary is invalid.
-          context:
+          content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponses'
+                $ref: "#/components/schemas/ErrorResponses"
   /health:
     get:
       summary: Check
       operationId: check
       responses:
-        '200':
+        "200":
           description: Health check
-          content: 
+          content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HealthCheckResponses'
+                $ref: "#/components/schemas/HealthCheckResponses"
 components:
   schemas:
     HealthCheckResponses:
       type: object
       x-go-type-skip-optional-pointer: true
-      required: 
+      required:
         - status
       properties:
         status:
@@ -130,12 +135,12 @@ components:
     TaxBracketResponses:
       type: array
       x-go-type-skip-optional-pointer: true
-      items: 
-        $ref: '#/components/schemas/TaxBracket'
+      items:
+        $ref: "#/components/schemas/TaxBracket"
     TaxBracket:
       type: object
       x-go-type-skip-optional-pointer: true
-      required: 
+      required:
         - min
         - max
         - rate
@@ -156,11 +161,11 @@ components:
       type: object
       x-go-type-skip-optional-pointer: true
       additionalProperties:
-        $ref: '#/components/schemas/TaxBracketResponses'
+        $ref: "#/components/schemas/TaxBracketResponses"
     CalculateRequest:
       type: object
       x-go-type-skip-optional-pointer: true
-      required: 
+      required:
         - salary
       properties:
         salary:
@@ -169,7 +174,7 @@ components:
     CalculateResponse:
       type: object
       x-go-type-skip-optional-pointer: true
-      required: 
+      required:
         - total_tax_owed
         - tax_year
         - tax_owed_per_band
@@ -185,7 +190,7 @@ components:
         tax_owed_per_band:
           type: array
           items:
-            $ref: '#/components/schemas/TaxBracket'
+            $ref: "#/components/schemas/TaxBracket"
           x-go-type-skip-optional-pointer: true
         salary:
           type: number
@@ -202,6 +207,7 @@ components:
           x-go-type-skip-optional-pointer: true
         code:
           type: integer
+          minimum: 0
           x-go-type-skip-optional-pointer: true
         field:
           type: string
