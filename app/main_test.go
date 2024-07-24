@@ -18,7 +18,7 @@ func TestCalculateTaxAmount(t *testing.T) {
 // TestValidateSalary tests the ValidateSalary function.
 func TestValidateSalary(t *testing.T) {
 	var tests = []struct {
-		salary float64
+		salary float32
 		valid  bool
 	}{
 		{50000, true},

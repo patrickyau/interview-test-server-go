@@ -34,7 +34,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
           description: Year to get tax bracket
       responses:
         '200':
@@ -43,6 +43,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaxBracketResponses'
+        '404':
+          description: Tax bracket for the year cannot found
+          context:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
+        '400':
+          description: The year is invalid
+          context:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
   /tax-years:
     get:
       summary: Get all tax brackets
@@ -66,7 +78,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
           description: Year to calculate tax
       requestBody:
         required: true
@@ -81,7 +93,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CalculateResponse'
-  /check:
+        '404':
+          description: Tax bracket for the year cannot found
+          context:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
+        '400':
+          description: The year or the salary is invalid.
+          context:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponses'
+  /health:
     get:
       summary: Check
       operationId: check
@@ -98,26 +122,16 @@ components:
       type: object
       x-go-type-skip-optional-pointer: true
       required: 
-        - Status
+        - status
       properties:
-        Status:
+        status:
           type: string
           x-go-type-skip-optional-pointer: true
     TaxBracketResponses:
-      type: object
+      type: array
       x-go-type-skip-optional-pointer: true
-      required: 
-        - year
-        - taxBracket
-      properties:
-        year:
-          type: integer
-          x-go-type-skip-optional-pointer: true
-        taxBracket:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaxBracket'
-          x-go-type-skip-optional-pointer: true
+      items: 
+        $ref: '#/components/schemas/TaxBracket'
     TaxBracket:
       type: object
       x-go-type-skip-optional-pointer: true
@@ -127,10 +141,10 @@ components:
         - rate
       properties:
         min:
-          type: integer
+          type: number
           x-go-type-skip-optional-pointer: true
         max:
-          type: integer
+          type: number
           x-go-type-skip-optional-pointer: true
         rate:
           type: number
@@ -141,14 +155,8 @@ components:
     AllTaxBracketResponses:
       type: object
       x-go-type-skip-optional-pointer: true
-      required: 
-        - taxBrackets
-      properties:
-        taxBrackets:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaxBracket'
-          x-go-type-skip-optional-pointer: true
+      additionalProperties:
+        $ref: '#/components/schemas/TaxBracketResponses'
     CalculateRequest:
       type: object
       x-go-type-skip-optional-pointer: true
@@ -162,13 +170,17 @@ components:
       type: object
       x-go-type-skip-optional-pointer: true
       required: 
-        - tax
+        - total_tax_owed
+        - tax_year
+        - tax_owed_per_band
+        - salary
+        - effective_tax_rate
       properties:
         total_tax_owed:
           type: number
           x-go-type-skip-optional-pointer: true
         tax_year:
-          type: integer
+          type: string
           x-go-type-skip-optional-pointer: true
         tax_owed_per_band:
           type: array
@@ -179,5 +191,18 @@ components:
           type: number
           x-go-type-skip-optional-pointer: true
         effective_tax_rate:
+          type: string
+          x-go-type-skip-optional-pointer: true
+    ErrorResponses:
+      type: object
+      x-go-type-skip-optional-pointer: true
+      properties:
+        message:
+          type: string
+          x-go-type-skip-optional-pointer: true
+        code:
+          type: integer
+          x-go-type-skip-optional-pointer: true
+        field:
           type: string
           x-go-type-skip-optional-pointer: true

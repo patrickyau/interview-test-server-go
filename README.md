@@ -40,7 +40,7 @@ The application you’re building should have an HTTP API with an endpoint that 
 #### Accomplish the following:
 
 * Fetch the tax rates by year i.e. 
-  [/tax-calculator/tax-year/[2019|2020|2021|2022]](/tax-calculator/tax-year/2022)
+  [/tax-calculator/tax-years/[2019|2020|2021|2022]](http://localhost:8080/tax-calculator/tax-years/2022)
 * Receive a yearly salary
 * Calculate and display the total taxes owed for the salary
 * Display the amount of taxes owed per band
@@ -61,7 +61,7 @@ The application you’re building should have an HTTP API with an endpoint that 
 
 ### Sample Request
 
-The sample POST request to `http://localhost:8080/tax-calculator/tax-year/2023` can use the following JSON as the body
+The sample POST request to `http://localhost:8080/tax-calculator/tax-years/2023/calculate` can use the following JSON as the body
 
 ```json
 {
@@ -118,22 +118,22 @@ In order to run the API locally, please follow these instructions:
 
 ```bash
 docker pull patrickyau/interview-test-server-go
-docker run --init --rm -p 8080:8080 --name interview-test-server interview-test-server
+docker run --init --rm -p 8080:8080 --name interview-test-server interview-test-server (or use `make run`)
 ```
 
-Navigate to [http://localhost:8080](http://localhost:8080). You should be greeted with this message:
+Navigate to [http://localhost:8080/tax-calculator/health](http://localhost:8080/tax-calculator/health). You should be greeted with this message:
 ```json
 {
-    "message": "Hello, this is the Interview Test Server!"
+    "status": "ok"
 }
 ```
 
 To access to the different available endpoints. The following are the relevant endpoints:
 
-* GET [/tax-calculator/](http://localhost:5001/tax-calculator/) - endpoint to get the default 2022 tax rates
-* GET [/tax-calculator/tax-year/2022](/tax-calculator/tax-year/2022) - endpoint to get the tax rates
-* GET [/tax-calculator/tax-year](/tax-calculator/tax-year) - endpoint to get the tax rates of all years
-* POST [/tax-calculator/tax-year/2022](/tax-calculator/tax-year/2022) - endpoint to get the tax owed for the year
-
+* GET [/tax-calculator/](http://localhost:8080/tax-calculator/) - endpoint to get the default 2022 tax rates
+* GET [/tax-calculator/tax-years/2022](http://localhost:8080/tax-calculator/tax-years/2022) - endpoint to get the tax rates
+* GET [/tax-calculator/tax-years](http://localhost:8080/tax-calculator/tax-years) - endpoint to get the tax rates of all years
+* POST [/tax-calculator/tax-years/2022/calculate](http://localhost:8080/tax-calculator/tax-years/2022/calculate) - endpoint to get the tax owed for the year
+* GET [/tax-calculator/health](http://localhost:8080/tax-calculator/health) - endpoint to get the health of the service
 
 

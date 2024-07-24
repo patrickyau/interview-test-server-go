@@ -2,10 +2,10 @@ package main
 
 // TaxBracket represents a tax bracket for a given year.
 type TaxBracket struct {
-	Min     float64 `json:"min"`
-	Max     float64 `json:"max"`
-	Rate    float64 `json:"rate"`
-	TaxOwed float64 `json:"tax_owed,omitempty"`
+	Min     float32 `json:"min"`
+	Max     float32 `json:"max"`
+	Rate    float32 `json:"rate"`
+	TaxOwed float32 `json:"tax_owed,omitempty"`
 }
 
 // TaxBrackets represents the tax brackets for all supported years.

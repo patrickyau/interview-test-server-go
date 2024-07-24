@@ -4,7 +4,7 @@ go 1.22.5
 
 require (
 	github.com/getkin/kin-openapi v0.126.0
-	github.com/go-chi/chi v1.5.5
+	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-openapi/runtime v0.28.0
 	github.com/oapi-codegen/nethttp-middleware v1.0.2
 	github.com/oapi-codegen/runtime v1.1.1

@@ -16,19 +16,13 @@ import (
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/oapi-codegen/runtime"
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
 
-const (
-	ApiKeyScopes = "apiKey.Scopes"
-)
-
 // AllTaxBracketResponses defines model for AllTaxBracketResponses.
-type AllTaxBracketResponses struct {
-	TaxBrackets []TaxBracket `json:"taxBrackets"`
-}
+type AllTaxBracketResponses map[string]TaxBracketResponses
 
 // CalculateRequest defines model for CalculateRequest.
 type CalculateRequest struct {
@@ -37,31 +31,28 @@ type CalculateRequest struct {
 
 // CalculateResponse defines model for CalculateResponse.
 type CalculateResponse struct {
-	EffectiveTaxRate string       `json:"effective_tax_rate,omitempty"`
-	Salary           float32      `json:"salary,omitempty"`
-	TaxOwedPerBand   []TaxBracket `json:"tax_owed_per_band,omitempty"`
-	TaxYear          int          `json:"tax_year,omitempty"`
-	TotalTaxOwed     float32      `json:"total_tax_owed,omitempty"`
+	EffectiveTaxRate string       `json:"effective_tax_rate"`
+	Salary           float32      `json:"salary"`
+	TaxOwedPerBand   []TaxBracket `json:"tax_owed_per_band"`
+	TaxYear          string       `json:"tax_year"`
+	TotalTaxOwed     float32      `json:"total_tax_owed"`
 }
 
 // HealthCheckResponses defines model for HealthCheckResponses.
 type HealthCheckResponses struct {
-	Status string `json:"Status"`
+	Status string `json:"status"`
 }
 
 // TaxBracket defines model for TaxBracket.
 type TaxBracket struct {
-	Max     int     `json:"max"`
-	Min     int     `json:"min"`
+	Max     float32 `json:"max"`
+	Min     float32 `json:"min"`
 	Rate    float32 `json:"rate"`
 	TaxOwed float32 `json:"tax_owed,omitempty"`
 }
 
 // TaxBracketResponses defines model for TaxBracketResponses.
-type TaxBracketResponses struct {
-	TaxBracket []TaxBracket `json:"taxBracket"`
-	Year       int          `json:"year"`
-}
+type TaxBracketResponses = []TaxBracket
 
 // CalculateJSONRequestBody defines body for Calculate for application/json ContentType.
 type CalculateJSONRequestBody = CalculateRequest
@@ -72,17 +63,17 @@ type ServerInterface interface {
 	// (GET /)
 	GetTaxCalculator(w http.ResponseWriter, r *http.Request)
 	// Check
-	// (GET /check)
+	// (GET /health)
 	Check(w http.ResponseWriter, r *http.Request)
 	// Get all tax brackets
 	// (GET /tax-years)
 	GetAllTaxCalculator(w http.ResponseWriter, r *http.Request)
 	// Get tax bracket for the given year
 	// (GET /tax-years/{year})
-	GetTaxCalculatorByYear(w http.ResponseWriter, r *http.Request, year int)
+	GetTaxCalculatorByYear(w http.ResponseWriter, r *http.Request, year string)
 	// Calculate
 	// (POST /tax-years/{year}/calculate)
-	Calculate(w http.ResponseWriter, r *http.Request, year int)
+	Calculate(w http.ResponseWriter, r *http.Request, year string)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -96,7 +87,7 @@ func (_ Unimplemented) GetTaxCalculator(w http.ResponseWriter, r *http.Request) 
 }
 
 // Check
-// (GET /check)
+// (GET /health)
 func (_ Unimplemented) Check(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
@@ -109,13 +100,13 @@ func (_ Unimplemented) GetAllTaxCalculator(w http.ResponseWriter, r *http.Reques
 
 // Get tax bracket for the given year
 // (GET /tax-years/{year})
-func (_ Unimplemented) GetTaxCalculatorByYear(w http.ResponseWriter, r *http.Request, year int) {
+func (_ Unimplemented) GetTaxCalculatorByYear(w http.ResponseWriter, r *http.Request, year string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Calculate
 // (POST /tax-years/{year}/calculate)
-func (_ Unimplemented) Calculate(w http.ResponseWriter, r *http.Request, year int) {
+func (_ Unimplemented) Calculate(w http.ResponseWriter, r *http.Request, year string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -180,7 +171,7 @@ func (siw *ServerInterfaceWrapper) GetTaxCalculatorByYear(w http.ResponseWriter,
 	var err error
 
 	// ------------- Path parameter "year" -------------
-	var year int
+	var year string
 
 	err = runtime.BindStyledParameterWithOptions("simple", "year", chi.URLParam(r, "year"), &year, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
@@ -206,7 +197,7 @@ func (siw *ServerInterfaceWrapper) Calculate(w http.ResponseWriter, r *http.Requ
 	var err error
 
 	// ------------- Path parameter "year" -------------
-	var year int
+	var year string
 
 	err = runtime.BindStyledParameterWithOptions("simple", "year", chi.URLParam(r, "year"), &year, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
 	if err != nil {
@@ -342,7 +333,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/", wrapper.GetTaxCalculator)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/check", wrapper.Check)
+		r.Get(options.BaseURL+"/health", wrapper.Check)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/tax-years", wrapper.GetAllTaxCalculator)
@@ -406,7 +397,7 @@ func (response GetAllTaxCalculator200JSONResponse) VisitGetAllTaxCalculatorRespo
 }
 
 type GetTaxCalculatorByYearRequestObject struct {
-	Year int `json:"year"`
+	Year string `json:"year"`
 }
 
 type GetTaxCalculatorByYearResponseObject interface {
@@ -422,8 +413,24 @@ func (response GetTaxCalculatorByYear200JSONResponse) VisitGetTaxCalculatorByYea
 	return json.NewEncoder(w).Encode(response)
 }
 
+type GetTaxCalculatorByYear400Response struct {
+}
+
+func (response GetTaxCalculatorByYear400Response) VisitGetTaxCalculatorByYearResponse(w http.ResponseWriter) error {
+	w.WriteHeader(400)
+	return nil
+}
+
+type GetTaxCalculatorByYear404Response struct {
+}
+
+func (response GetTaxCalculatorByYear404Response) VisitGetTaxCalculatorByYearResponse(w http.ResponseWriter) error {
+	w.WriteHeader(404)
+	return nil
+}
+
 type CalculateRequestObject struct {
-	Year int `json:"year"`
+	Year string `json:"year"`
 	Body *CalculateJSONRequestBody
 }
 
@@ -440,13 +447,29 @@ func (response Calculate200JSONResponse) VisitCalculateResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
+type Calculate400Response struct {
+}
+
+func (response Calculate400Response) VisitCalculateResponse(w http.ResponseWriter) error {
+	w.WriteHeader(400)
+	return nil
+}
+
+type Calculate404Response struct {
+}
+
+func (response Calculate404Response) VisitCalculateResponse(w http.ResponseWriter) error {
+	w.WriteHeader(404)
+	return nil
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// Get tax bracket for the default year 2022
 	// (GET /)
 	GetTaxCalculator(ctx context.Context, request GetTaxCalculatorRequestObject) (GetTaxCalculatorResponseObject, error)
 	// Check
-	// (GET /check)
+	// (GET /health)
 	Check(ctx context.Context, request CheckRequestObject) (CheckResponseObject, error)
 	// Get all tax brackets
 	// (GET /tax-years)
@@ -561,7 +584,7 @@ func (sh *strictHandler) GetAllTaxCalculator(w http.ResponseWriter, r *http.Requ
 }
 
 // GetTaxCalculatorByYear operation middleware
-func (sh *strictHandler) GetTaxCalculatorByYear(w http.ResponseWriter, r *http.Request, year int) {
+func (sh *strictHandler) GetTaxCalculatorByYear(w http.ResponseWriter, r *http.Request, year string) {
 	var request GetTaxCalculatorByYearRequestObject
 
 	request.Year = year
@@ -587,7 +610,7 @@ func (sh *strictHandler) GetTaxCalculatorByYear(w http.ResponseWriter, r *http.R
 }
 
 // Calculate operation middleware
-func (sh *strictHandler) Calculate(w http.ResponseWriter, r *http.Request, year int) {
+func (sh *strictHandler) Calculate(w http.ResponseWriter, r *http.Request, year string) {
 	var request CalculateRequestObject
 
 	request.Year = year
@@ -622,21 +645,22 @@ func (sh *strictHandler) Calculate(w http.ResponseWriter, r *http.Request, year 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8xXS2/jNhD+K8S0R9lK3ZtuSbDYBmh72ORSBIYxpsYyNxLJJUd+INB/L0j5IcvOwht7",
-	"g70kFsV5ft889ArSVNZo0uwhewUv51Rh/Hlblk+4unMoX4i/kLdGe4pvrDOWHKv2iXeX4qNiquKP3x3N",
-	"IIPf0r2FdKM+3SuGJgFeW4IM0DlcQwKrQWEG4WzgX5QdGMvKaCwH1ijN5CBjV1PTJODoW60c5ZA9H3gx",
-	"3qk0068k+WydCdxjKesSmb7Qt5o8H4frsUS3joG3NnRdTcm91++Nuuu43GJ07DPNZiRZLWjCuJo4ZOr4",
-	"79kpXfyAwUszkASwJmZJ+cSSm0xR5x9JnNb8mtB1QggXih+LwTCWk20kV+MD4+oSMvxFWPL8fk7y5Tsl",
-	"+8jItX8/B3o+b9Rd4HYH1iNnK1xdBFSl9EXyvXJ5N9mvRpEQUBLTsnHuKok/q8N/bJ1eWKO9tEVtSTeY",
-	"d+ctqFZ6ZoJzOXnpVLwHGTzNlfJCeYHCq8qWJDy5BTkxM05EFQtFS8HkWSgtPpshJFAqSZu+rbEK/txa",
-	"lHMSo+ENJFC7EjKYM1ufpelyuRxifD00rkg3sj79++H+07+PnwZBJqRccRk0PexsPgWbj6030TQksCDn",
-	"W8f/GN5EYzEBFuULFkG8UDyvp0NpqtSgVQNpcipIp67WrCqKAt0Xg0rleUlLdIE6z/DP7hHGTQLGkkar",
-	"IIM/N/Ys8jyyKQ1/ipZigXwYMvqQQwafiZ9wtR1zJoDoumQd3dyEf9JoJh3l0dpSyagh/eqN3m825/N2",
-	"Xw8R7h7MuBLT9l5EluckcpphXbIIPBOjm9EIgpyvqypOyxCG4LPlUhl6+Js5iR3+Zybi5CA5kYn2nmi9",
-	"PQz4fneWMq4GIT7/PZDbhfNjcH5juT0R4G1ZdmHzJ1DFU1f2Maev4V9zNr/v1v+1rcqiw4qYQtqe+50m",
-	"3BFsRHFIKwidCbJYV5Bs+8mm9+3bYWhjSSdXvRbbNONfs8gKtSAdS+XM6uoJHKGSyu36HOeeaVf+Q0d2",
-	"G3ZrAT3lwuiO+nYjFqjzeBhubTLeq9qdrTPBlV3LV4U2ft3cmXx9NVSPPp2awwm8Xad+FquOv4Pe4NQ2",
-	"qeGk17E6+DAWcYLtz8ZRXzvPW9DayRw5Jfdtqxk3/wcAAP//E0rGg1cPAAA=",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
